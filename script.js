@@ -100,7 +100,7 @@ function renderGrid() {
       input.type = 'text';
       input.maxLength = 1;
       input.value = state.cells[row][col].letter;
-      input.disabled = state.cells[row][col].blank;
+      input.readOnly = state.cells[row][col].blank;
       input.addEventListener('focus', () => selectCell(row, col));
       input.addEventListener('input', (event) => handleCellInput(event, row, col));
       input.addEventListener('keydown', (event) => handleGridKeydown(event, row, col));
@@ -189,7 +189,6 @@ function highlightDirectionPath() {
 }
 
 function selectCell(row, col) {
-  if (state.cells[row][col].blank) return;
   state.selected = { row, col };
   updateSelection();
   const index = row * state.size + col;
@@ -204,9 +203,7 @@ function moveSelection(row, col) {
     row: Math.max(0, Math.min(state.size - 1, row)),
     col: Math.max(0, Math.min(state.size - 1, col)),
   };
-  if (!state.cells[bounded.row][bounded.col].blank) {
-    selectCell(bounded.row, bounded.col);
-  }
+  selectCell(bounded.row, bounded.col);
 }
 
 function handleCellInput(event, row, col) {
