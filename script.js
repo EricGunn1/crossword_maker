@@ -196,6 +196,7 @@ function selectCell(row, col) {
   const cell = gridContainer.children[index];
   const input = cell.querySelector('input');
   input.focus();
+  input.select();
 }
 
 function moveSelection(row, col) {
