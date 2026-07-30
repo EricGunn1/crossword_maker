@@ -306,6 +306,9 @@ function handleToggleBlank() {
   recomputeClues();
   renderGrid();
   renderClues();
+  if (!makingBlank) {
+    selectCell(row, col);
+  }
 }
 
 function publishPuzzle() {
@@ -366,6 +369,19 @@ function init() {
   publishBtn.addEventListener('click', publishPuzzle);
   returnEditBtn.addEventListener('click', () => {
     publishedPanel.classList.add('hidden');
+  });
+
+  // Handled at the document level (rather than per-cell) because toggling
+  // a cell blank disables its input and drops keyboard focus to <body>,
+  // so a per-input listener can't catch the keypress that un-blanks it.
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== ' ') return;
+    const active = document.activeElement;
+    const isGridInput = active instanceof HTMLElement && gridContainer.contains(active);
+    const isBody = active === document.body;
+    if (!isGridInput && !isBody) return;
+    event.preventDefault();
+    handleToggleBlank();
   });
 }
 
