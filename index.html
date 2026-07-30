@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crossword Maker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Crossword Maker</h1>
+      <p>Create a square crossword grid, insert blanks, and write clues independently.</p>
+    </header>
+
+    <section class="controls">
+      <label>
+        Grid size:
+        <select id="grid-size-select"></select>
+      </label>
+      <button id="new-puzzle-btn">New Puzzle</button>
+      <button id="toggle-blank-btn">Toggle Blank</button>
+      <button id="publish-btn">Publish Puzzle</button>
+    </section>
+
+    <section class="grid-section">
+      <div id="grid-container" class="grid"></div>
+    </section>
+
+    <section class="clues-section">
+      <div class="clue-panel">
+        <h2>Across Clues</h2>
+        <div id="across-clues" class="clue-list"></div>
+      </div>
+      <div class="clue-panel">
+        <h2>Down Clues</h2>
+        <div id="down-clues" class="clue-list"></div>
+      </div>
+    </section>
+
+    <section class="published-section hidden" id="published-panel">
+      <h2>Published Puzzle</h2>
+      <p>Read-only blank grid with clues.</p>
+      <div id="published-grid" class="grid"></div>
+      <div class="published-clues">
+        <div class="clue-panel">
+          <h3>Across</h3>
+          <ol id="published-across"></ol>
+        </div>
+        <div class="clue-panel">
+          <h3>Down</h3>
+          <ol id="published-down"></ol>
+        </div>
+      </div>
+      <button id="return-edit-btn">Return to Edit</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

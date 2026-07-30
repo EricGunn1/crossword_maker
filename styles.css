@@ -1,0 +1,183 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #111;
+  background: #f4f4f7;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.controls label,
+.controls button {
+  font-size: 0.95rem;
+}
+
+button {
+  padding: 10px 14px;
+  background: #1f2937;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #111827;
+}
+
+.grid-section,
+.clues-section,
+.published-section {
+  margin-bottom: 24px;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+  background: #444;
+  width: min(100%, 650px);
+  aspect-ratio: 1 / 1;
+  border: 2px solid #444;
+}
+
+.cell {
+  position: relative;
+  background: #fff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cell.blank {
+  background: #111;
+  cursor: pointer;
+}
+
+.cell input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: transparent;
+  color: #111;
+  outline: none;
+}
+
+.cell.selected {
+  outline: 3px solid #2563eb;
+}
+
+.cell.direction-across.selected {
+  outline-color: #2563eb;
+}
+
+.cell.direction-down.selected {
+  outline-color: #ef4444;
+}
+
+.cell.highlight {
+  background: #e0f2fe;
+}
+
+.clues-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.clue-panel {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+.clue-panel h2,
+.clue-panel h3 {
+  margin-top: 0;
+}
+
+.clue-list {
+  display: grid;
+  gap: 10px;
+}
+
+.clue-item {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.clue-item label {
+  font-weight: 700;
+}
+
+.clue-item input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.published-section.hidden {
+  display: none;
+}
+
+.published-grid {
+  margin-bottom: 16px;
+}
+
+.published-grid .cell {
+  background: #fff;
+}
+
+.published-grid .cell.blank {
+  background: #111;
+}
+
+.published-clues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.published-clues ol {
+  margin: 0;
+  padding-left: 22px;
+}
