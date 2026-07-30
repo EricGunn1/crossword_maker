@@ -110,6 +110,11 @@ button:hover {
   caret-color: transparent;
 }
 
+.cell input::selection {
+  background: transparent;
+  color: inherit;
+}
+
 .cell.selected {
   outline: 3px solid #2563eb;
   background: #fef9c3;
