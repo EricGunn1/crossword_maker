@@ -107,10 +107,12 @@ button:hover {
   background: transparent;
   color: #111;
   outline: none;
+  caret-color: transparent;
 }
 
 .cell.selected {
   outline: 3px solid #2563eb;
+  background: #fef9c3;
 }
 
 .cell.direction-across.selected {
