@@ -86,6 +86,17 @@ button:hover {
   cursor: pointer;
 }
 
+.cell-number {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #111;
+  pointer-events: none;
+}
+
 .cell input {
   width: 100%;
   height: 100%;
@@ -110,7 +121,7 @@ button:hover {
   outline-color: #ef4444;
 }
 
-.cell.highlight {
+.cell.highlight:not(.blank) {
   background: #e0f2fe;
 }
 
@@ -179,5 +190,6 @@ button:hover {
 
 .published-clues ol {
   margin: 0;
-  padding-left: 22px;
+  padding-left: 0;
+  list-style: none;
 }

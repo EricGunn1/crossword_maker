@@ -31,16 +31,43 @@ function createGridData(size) {
   return cells;
 }
 
-function buildClueEntries(size) {
+function computeClueNumbers(cells, size) {
+  const numbers = Array.from({ length: size }, () => Array(size).fill(null));
   const across = [];
   const down = [];
-  for (let r = 0; r < size; r += 1) {
-    across.push({ number: r + 1, label: `Row ${r + 1}` });
+  let next = 1;
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      if (cells[row][col].blank) continue;
+      const leftBlocked = col === 0 || cells[row][col - 1].blank;
+      const rightOpen = col + 1 < size && !cells[row][col + 1].blank;
+      const startsAcross = leftBlocked && rightOpen;
+      const topBlocked = row === 0 || cells[row - 1][col].blank;
+      const bottomOpen = row + 1 < size && !cells[row + 1][col].blank;
+      const startsDown = topBlocked && bottomOpen;
+      if (!startsAcross && !startsDown) continue;
+      numbers[row][col] = next;
+      if (startsAcross) {
+        let length = 0;
+        for (let c = col; c < size && !cells[row][c].blank; c += 1) length += 1;
+        across.push({ number: next, row, col, length });
+      }
+      if (startsDown) {
+        let length = 0;
+        for (let r = row; r < size && !cells[r][col].blank; r += 1) length += 1;
+        down.push({ number: next, row, col, length });
+      }
+      next += 1;
+    }
   }
-  for (let c = 0; c < size; c += 1) {
-    down.push({ number: c + 1, label: `Col ${c + 1}` });
-  }
-  return { across, down };
+  return { numbers, across, down };
+}
+
+function recomputeClues() {
+  const { numbers, across, down } = computeClueNumbers(state.cells, state.size);
+  state.numbers = numbers;
+  state.acrossClues = across;
+  state.downClues = down;
 }
 
 function resetState(size = 10) {
@@ -48,10 +75,8 @@ function resetState(size = 10) {
   state.direction = 'across';
   state.selected = { row: 0, col: 0 };
   state.cells = createGridData(size);
-  const { acrossClues, downClues } = buildClueEntries(size);
-  state.acrossClues = acrossClues;
-  state.downClues = downClues;
   state.cluesText = { across: {}, down: {} };
+  recomputeClues();
 }
 
 function renderGrid() {
@@ -63,6 +88,13 @@ function renderGrid() {
       cell.className = 'cell';
       if (state.cells[row][col].blank) {
         cell.classList.add('blank');
+      }
+      const number = state.numbers[row][col];
+      if (number) {
+        const numberEl = document.createElement('span');
+        numberEl.className = 'cell-number';
+        numberEl.textContent = number;
+        cell.appendChild(numberEl);
       }
       const input = document.createElement('input');
       input.type = 'text';
@@ -88,16 +120,17 @@ function renderClues() {
   downCluesEl.innerHTML = '';
 
   state.acrossClues.forEach((entry) => {
+    const key = `${entry.row},${entry.col}`;
     const container = document.createElement('div');
     container.className = 'clue-item';
     const label = document.createElement('label');
     label.textContent = `${entry.number}.`;
     const input = document.createElement('input');
     input.type = 'text';
-    input.value = state.cluesText.across[entry.number] || '';
+    input.value = state.cluesText.across[key] || '';
     input.placeholder = `Across clue ${entry.number}`;
     input.addEventListener('input', (event) => {
-      state.cluesText.across[entry.number] = event.target.value;
+      state.cluesText.across[key] = event.target.value;
     });
     container.appendChild(label);
     container.appendChild(input);
@@ -105,16 +138,17 @@ function renderClues() {
   });
 
   state.downClues.forEach((entry) => {
+    const key = `${entry.row},${entry.col}`;
     const container = document.createElement('div');
     container.className = 'clue-item';
     const label = document.createElement('label');
     label.textContent = `${entry.number}.`;
     const input = document.createElement('input');
     input.type = 'text';
-    input.value = state.cluesText.down[entry.number] || '';
+    input.value = state.cluesText.down[key] || '';
     input.placeholder = `Down clue ${entry.number}`;
     input.addEventListener('input', (event) => {
-      state.cluesText.down[entry.number] = event.target.value;
+      state.cluesText.down[key] = event.target.value;
     });
     container.appendChild(label);
     container.appendChild(input);
@@ -228,14 +262,10 @@ function updateGridSizeSelector() {
   }
 }
 
-function anyClueTextAffectedByBlank(row, col, blankValue) {
-  const isBlank = blankValue === true;
-  if (!isBlank) return false;
-  const acrossClueIndex = row;
-  const downClueIndex = col;
-  return Boolean(
-    state.cluesText.across[acrossClueIndex + 1] ||
-    state.cluesText.down[downClueIndex + 1]
+function anyClueTextExists() {
+  return (
+    Object.values(state.cluesText.across).some(Boolean) ||
+    Object.values(state.cluesText.down).some(Boolean)
   );
 }
 
@@ -244,7 +274,7 @@ function handleToggleBlank() {
   const cell = state.cells[row][col];
   if (!cell) return;
   const makingBlank = !cell.blank;
-  if (makingBlank && anyClueTextAffectedByBlank(row, col, true)) {
+  if (makingBlank && anyClueTextExists()) {
     const proceed = window.confirm(
       'Inserting a blank here may impact existing clues already written. Proceed?'
     );
@@ -254,14 +284,8 @@ function handleToggleBlank() {
   if (makingBlank) {
     cell.letter = '';
   }
+  recomputeClues();
   renderGrid();
-  refreshClueEntries();
-}
-
-function refreshClueEntries() {
-  const { acrossClues, downClues } = buildClueEntries(state.size);
-  state.acrossClues = acrossClues;
-  state.downClues = downClues;
   renderClues();
 }
 
@@ -274,19 +298,28 @@ function publishPuzzle() {
       const cell = document.createElement('div');
       cell.className = 'cell';
       if (state.cells[row][col].blank) cell.classList.add('blank');
+      const number = state.numbers[row][col];
+      if (number) {
+        const numberEl = document.createElement('span');
+        numberEl.className = 'cell-number';
+        numberEl.textContent = number;
+        cell.appendChild(numberEl);
+      }
       publishedGrid.appendChild(cell);
     }
   }
   publishedAcross.innerHTML = '';
   publishedDown.innerHTML = '';
   state.acrossClues.forEach((entry) => {
+    const key = `${entry.row},${entry.col}`;
     const item = document.createElement('li');
-    item.textContent = state.cluesText.across[entry.number] || '...';
+    item.textContent = `${entry.number}. ${state.cluesText.across[key] || '...'}`;
     publishedAcross.appendChild(item);
   });
   state.downClues.forEach((entry) => {
+    const key = `${entry.row},${entry.col}`;
     const item = document.createElement('li');
-    item.textContent = state.cluesText.down[entry.number] || '...';
+    item.textContent = `${entry.number}. ${state.cluesText.down[key] || '...'}`;
     publishedDown.appendChild(item);
   });
 }
