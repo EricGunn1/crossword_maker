@@ -303,7 +303,13 @@ function handleToggleBlank() {
   recomputeClues();
   renderGrid();
   renderClues();
-  if (!makingBlank) {
+  if (makingBlank) {
+    if (state.direction === 'across') {
+      moveSelection(row, col + 1);
+    } else {
+      moveSelection(row + 1, col);
+    }
+  } else {
     selectCell(row, col);
   }
 }
