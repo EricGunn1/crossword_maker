@@ -238,6 +238,10 @@ function handleGridKeydown(event, row, col) {
     event.preventDefault();
     moveSelection(row, col + 1);
   }
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    toggleDirection();
+  }
   if (event.key === 'Delete') {
     event.preventDefault();
     clearCell(row, col);
