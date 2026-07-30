@@ -237,12 +237,26 @@ function handleGridKeydown(event, row, col) {
     event.preventDefault();
     moveSelection(row, col + 1);
   }
-  if (event.key === 'Backspace') {
-    state.cells[row][col].letter = '';
-    const index = row * state.size + col;
-    const input = gridContainer.children[index].querySelector('input');
-    input.value = '';
+  if (event.key === 'Delete') {
+    event.preventDefault();
+    clearCell(row, col);
   }
+  if (event.key === 'Backspace') {
+    event.preventDefault();
+    clearCell(row, col);
+    if (state.direction === 'across') {
+      moveSelection(row, col - 1);
+    } else {
+      moveSelection(row - 1, col);
+    }
+  }
+}
+
+function clearCell(row, col) {
+  state.cells[row][col].letter = '';
+  const index = row * state.size + col;
+  const input = gridContainer.children[index].querySelector('input');
+  input.value = '';
 }
 
 function toggleDirection() {
